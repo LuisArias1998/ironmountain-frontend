@@ -1,0 +1,161 @@
+<div class="row">
+  <div class="col-md-6 col-sm-6 col-xs-6 col-auto">
+    <div class="d-flex justify-content-start mt-5">
+      <button type="button" (click)="clearRegistro()" class="btn btn-registro" data-bs-toggle="modal" data-bs-target="#registroModal">
+        Añadir registro <i class="far fa-clipboard"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="mt-2" style="max-height: 50vh; overflow-x: auto">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Direccion</th>
+        <th scope="col">Telefono</th>
+        <th scope="col">CURP</th>
+        <th scope="col">Fecha de registro</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let registro of registroList">
+        <td>{{registro.id}}</td>
+        <td>{{registro.nombre}}</td>
+        <td>{{registro.direccion}}</td>
+        <td>{{registro.telefono}}</td>
+        <td>{{registro.curp}}</td>
+        <td>{{registro.fechaRegistro | date:'dd/LL/yyyy'}}</td>
+        <td><a data-bs-toggle="modal" (click)="setRegistroToEdit(registro)" data-bs-target="#editarModal"><i class="fas fa-edit"></i></a></td>
+        <td><a (click)="removeRegistro(registro.id)"><i class="far fa-trash-alt"></i></a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!--MODAL VIEW REGISTRO-->
+<div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          Nuevo registro <i class="far fa-clipboard"></i>
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmit()" [formGroup]="registroFrom">
+          <div class="row">
+            <div class="col-md-6 col-xs-6 col-sm-6 mt-2">
+              <input type="text" class="form-control" id="nombre" name="nombre" required formControlName="nombre"
+                placeholder="Nombre" />
+              <div *ngIf="registroFrom.get('nombre')?.touched && registroFrom.get('nombre')?.errors">
+                <p style="font-size: 9px; color: red;">Campo no valido</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-xs-6 col-sm-6 mt-2">
+              <input type="text" class="form-control" id="direccion" name="direccion" required
+                formControlName="direccion" placeholder="Direccion" />
+              <div *ngIf="registroFrom.get('direccion')?.touched && registroFrom.get('direccion')?.errors">
+                <p style="font-size: 9px; color: red;">Campo no valido</p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-xs-6 col-sm-6 mt-2">
+              <input type="number" class="form-control" id="telefono" name="telefono" required
+                formControlName="telefono" placeholder="Telefono" />
+              <div *ngIf="registroFrom.get('telefono')?.touched && registroFrom.get('telefono')?.errors">
+                <p style="font-size: 9px; color: red;">Campo no valido</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-xs-6 col-sm-6 mt-2">
+              <input type="text" class="form-control" id="curp" name="curp" required formControlName="curp"
+                placeholder="CURP" />
+              <div *ngIf="registroFrom.get('curp')?.touched && registroFrom.get('curp')?.errors">
+                <p style="font-size: 9px; color: red;">Campo no valido</p>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <div class="d-flex justify-content-end">
+          <img class="nav-logo m-2" src="assets/ironmountain-brand.png" alt="Iron Mountain" height="25">
+          <button type="submit" class="btn btn-primary m-2" style="width: 150%" (click)="onSubmit()"
+            data-bs-dismiss="modal" aria-label="Close" [disabled]="registroFrom.invalid">
+            Añadir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--MODAL VIEW EDITAR-->
+<div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          Editar registro <i class="fas fa-edit"></i>
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmit()" [formGroup]="registroFrom">
+          <div class="row">
+            <div class="col-md-6 col-xs-6 col-sm-6 mt-2">
+              <input type="text" id="id" name="id" class="form-control" value="{{registroToEdit.id}}" [disabled]="true"> 
+            </div>
+            <div class="col-md-6 col-xs-6 col-sm-6 mt-2">
+              <input type="text" id="fechaRegistro" name="fechaRegistro" value="{{registroToEdit.fechaRegistro | date:'dd/MM/yyyy'}}" class="form-control" [disabled]="true"> 
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-xs-6 col-sm-6 mt-2">
+              <input type="text" class="form-control" id="nombre" name="nombre" value="{{registroToEdit.nombre}}" required formControlName="nombre"
+                placeholder="Nombre" />
+              <div *ngIf="registroFrom.get('nombre')?.touched && registroFrom.get('nombre')?.errors">
+                <p style="font-size: 9px; color: red;">Campo no valido</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-xs-6 col-sm-6 mt-2">
+              <input type="text" class="form-control" id="direccion" value="{{registroToEdit.direccion}}" name="direccion" required
+                formControlName="direccion" placeholder="Direccion" />
+              <div *ngIf="registroFrom.get('direccion')?.touched && registroFrom.get('direccion')?.errors">
+                <p style="font-size: 9px; color: red;">Campo no valido</p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-xs-6 col-sm-6 mt-2">
+              <input type="number" class="form-control" id="telefono" value="{{registroToEdit.telefono}}" name="telefono" required
+                formControlName="telefono" placeholder="Telefono" />
+              <div *ngIf="registroFrom.get('telefono')?.touched && registroFrom.get('telefono')?.errors">
+                <p style="font-size: 9px; color: red;">Campo no valido</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-xs-6 col-sm-6 mt-2">
+              <input type="text" class="form-control" id="curp" name="curp" value="{{registroToEdit.curp}}" required formControlName="curp"
+                placeholder="CURP" />
+              <div *ngIf="registroFrom.get('curp')?.touched && registroFrom.get('curp')?.errors">
+                <p style="font-size: 9px; color: red;">Campo no valido</p>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <div class="d-flex justify-content-end">
+          <img class="nav-logo m-2" src="assets/ironmountain-brand.png" alt="Iron Mountain" height="25">
+          <button type="submit" class="btn btn-primary m-2" [disabled]="registroFrom.invalid" style="width: 150%" (click)="onSubmitEdit()"
+            data-bs-dismiss="modal" aria-label="Close">
+            Editar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
